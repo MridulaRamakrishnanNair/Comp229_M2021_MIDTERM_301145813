@@ -21,14 +21,77 @@ router.get('/', (req, res, next) => {
         }
     });
 });
-router.get('/add', (req, res, next) => {
+router.get("/add", (req, res, next) => {
+    res.render("books/add.ejs", {
+        title: "Add a book",
+    });
 });
-router.post('/add', (req, res, next) => {
+router.post("/add", (req, res, next) => {
+    let newBook = new books_1.default({
+        Title: req.body.title,
+        Price: req.body.price,
+        Description: req.body.description,
+        Author: req.body.author,
+        Genre: req.body.genre,
+    });
+    books_1.default.create(newBook, (err, books) => {
+        if (err) {
+            console.log(err);
+            res.end(err);
+        }
+        else {
+            res.redirect("/books229");
+        }
+    });
 });
-router.get('/:id', (req, res, next) => {
+router.get("/edit/:id", (req, res, next) => {
+    let id = req.params.id;
+    books_1.default.findById(id, (err, BookToEdit) => {
+        if (err) {
+            console.log(err);
+            res.end(err);
+        }
+        else {
+            res.render("books/edit", {
+                title: "Edit Book",
+                books: BookToEdit,
+            });
+        }
+    });
 });
-router.post('/:id', (req, res, next) => {
+router.post("/edit/:id", (req, res, next) => {
+    let id = req.params.id;
+    console.log(id);
+    let editBook = new books_1.default({
+        _id: req.params.id,
+        Title: req.body.title,
+        Author: req.body.author,
+        Description: req.body.description,
+        Price: req.body.price,
+        Genre: req.body.genre,
+    });
+    books_1.default.updateOne({ _id: id }, editBook, {}, (err) => {
+        console.log(id);
+        if (err) {
+            console.log(err);
+            res.end(err);
+        }
+        else {
+            console.log("success");
+            res.redirect("/books229");
+        }
+    });
 });
-router.get('/delete/:id', (req, res, next) => {
+router.get("/delete/:id", (req, res, next) => {
+    let id = req.params.id;
+    books_1.default.deleteOne({ _id: id }, (err) => {
+        if (err) {
+            console.log(err);
+            res.end(err);
+        }
+        else {
+            res.redirect("/books229");
+        }
+    });
 });
 //# sourceMappingURL=books.js.map
