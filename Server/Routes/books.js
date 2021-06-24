@@ -22,64 +22,55 @@ router.get('/', (req, res, next) => {
     });
 });
 router.get("/add", (req, res, next) => {
-    res.render("books/add.ejs", {
-        title: "Add a book",
-    });
+    res.render("books/details", { title: "Add a book", page: "details", books: "" });
 });
 router.post("/add", (req, res, next) => {
     let newBook = new books_1.default({
         Title: req.body.title,
         Price: req.body.price,
-        Description: req.body.description,
         Author: req.body.author,
         Genre: req.body.genre,
     });
-    books_1.default.create(newBook, (err, books) => {
+    books_1.default.create(newBook, (err) => {
         if (err) {
             console.log(err);
             res.end(err);
         }
         else {
-            res.redirect("/books229");
+            res.redirect("/books");
         }
     });
 });
 router.get("/edit/:id", (req, res, next) => {
     let id = req.params.id;
-    books_1.default.findById(id, (err, BookToEdit) => {
+    books_1.default.findById(id, {}, {}, (err, bookItemToEdit) => {
         if (err) {
-            console.log(err);
+            return console.error(err);
             res.end(err);
         }
-        else {
-            res.render("books/edit", {
-                title: "Edit Book",
-                books: BookToEdit,
-            });
-        }
+        res.render("books/details", {
+            title: "Edit",
+            page: "details",
+            books: bookItemToEdit,
+        });
     });
 });
 router.post("/edit/:id", (req, res, next) => {
     let id = req.params.id;
-    console.log(id);
     let editBook = new books_1.default({
         _id: req.params.id,
         Title: req.body.title,
         Author: req.body.author,
-        Description: req.body.description,
         Price: req.body.price,
         Genre: req.body.genre,
     });
     books_1.default.updateOne({ _id: id }, editBook, {}, (err) => {
         console.log(id);
         if (err) {
-            console.log(err);
+            console.error(err);
             res.end(err);
         }
-        else {
-            console.log("success");
-            res.redirect("/books229");
-        }
+        res.redirect("/books");
     });
 });
 router.get("/delete/:id", (req, res, next) => {
@@ -89,9 +80,7 @@ router.get("/delete/:id", (req, res, next) => {
             console.log(err);
             res.end(err);
         }
-        else {
-            res.redirect("/books229");
-        }
+        res.redirect("/books");
     });
 });
 //# sourceMappingURL=books.js.map
